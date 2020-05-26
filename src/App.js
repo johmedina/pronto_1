@@ -11,8 +11,6 @@ import Productlist from './components/Productlist';
 import Additem from './components/Additem';
 import EditItem from './components/Edititem';
 
-import base from './base';
-
 class App extends Component {
   render() {
     return (
