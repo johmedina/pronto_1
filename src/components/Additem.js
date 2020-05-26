@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
-import { withFirebase } from './Firebase';
-
+import { storage } from "./Firebase";
 
 
 export default class Additem extends Component {
@@ -42,7 +41,7 @@ export default class Additem extends Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    const uploadTask = firebase.storage.ref(`images/${this.state.image.name}`).put(this.state.image);
+    const uploadTask = storage.ref(`images/${this.state.image.name}`).put(this.state.image);
     uploadTask.on(
       "state_changed",
       snapshot => {
@@ -54,7 +53,7 @@ export default class Additem extends Component {
         console.log(error);
       },
       () => {
-        firebase.storage
+        storage
           .ref("images")
           .child(this.state.image.name)
           .getDownloadURL()

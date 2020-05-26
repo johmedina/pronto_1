@@ -1,14 +1,6 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { withFirebase } from './Firebase';
-import { compose } from 'recompose';
 import '../App.css';
-
-const SignInPage = () => (
-  <div>
-    <SignInForm />
-  </div>
-)
 
 const INITIAL_STATE = {
   email: '',
@@ -16,7 +8,7 @@ const INITIAL_STATE = {
   error: null,
 };
 
-class SignInFormBase extends Component {
+class SignInPage extends Component {
     constructor(props) {
         super(props);
         this.state = { ...INITIAL_STATE };
@@ -24,17 +16,17 @@ class SignInFormBase extends Component {
 
     onSubmit = event => {
       const { email, password } = this.state;
-      this.props.firebase
-        .doSignInWithEmailAndPassword(email, password)
-        .then(() => {
-          console.log('logging in user')
-          this.setState({ ...INITIAL_STATE });
-          this.props.history.push('/productlist');
-        })
-        .catch(error => {
-          this.setState({ error });
-        });
-      event.preventDefault();
+      // this.props.firebase
+      //   .doSignInWithEmailAndPassword(email, password)
+      //   .then(() => {
+      //     console.log('logging in user')
+      //     this.setState({ ...INITIAL_STATE });
+      //     this.props.history.push('/productlist');
+      //   })
+      //   .catch(error => {
+      //     this.setState({ error });
+      //   });
+      // event.preventDefault();
     };
 
     onChange = event => {
@@ -100,11 +92,6 @@ class SignInFormBase extends Component {
     }
 }
 
-const SignInForm = compose(
-  withRouter,
-  withFirebase,
-)(SignInFormBase);
 
 export default SignInPage;
 
-export { SignInForm }
