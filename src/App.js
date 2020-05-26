@@ -14,6 +14,14 @@ import EditItem from './components/Edititem';
 import base from './base';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+ 
+    this.state = {
+      authUser: null,
+    };
+  }
+  
   render() {
     return (
         <React.Fragment>

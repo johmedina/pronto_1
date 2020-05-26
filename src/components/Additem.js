@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
+import { withFirebase } from './Firebase';
+
 
 
 export default class Additem extends Component {
@@ -7,18 +9,22 @@ export default class Additem extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      image: '',
+      image: null,
       name: '',
       price: '',
       description: '',
       availability: '',
       sizes: '',
-      colors: ''
+      colors: '',
+      url: '',
+      progress: '',
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
+
+
   onChange(e){
     let files=e.target.files;
 
@@ -27,13 +33,40 @@ export default class Additem extends Component {
     reader.onload=(e)=>{
       console.log("img data", e.target.result)
     }
+
+    if (e.target.files[0]) {
+      this.setState({image: e.target.files[0]});
+    }
   }
 
   handleSubmit(e) {
-      e.preventDefault();
+    e.preventDefault();
 
-      console.log('The form was submitted with the following data:');
-      console.log(this.state);
+    const uploadTask = firebase.storage.ref(`images/${this.state.image.name}`).put(this.state.image);
+    uploadTask.on(
+      "state_changed",
+      snapshot => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+      },
+      error => {
+        console.log(error);
+      },
+      () => {
+        firebase.storage
+          .ref("images")
+          .child(this.state.image.name)
+          .getDownloadURL()
+          .then(url => {
+            console.log(url)
+            this.setState({url: url})
+          });
+      }
+    );
+
+    //console.log('The form was submitted with the following data:');
+    //console.log(this.state);
   }
 
   handleChange(e) {
@@ -121,7 +154,7 @@ export default class Additem extends Component {
 
 
                   <div className="FormField">
-                      <button className="FormField__Button2 mr-20">Apply</button>
+                      <button className="FormField__Button2 mr-20" onClick={this.handleSubmit}>Apply</button>
                       <Link to="/productlist" className="FormField__Button2">Save</Link>
                       <Link to="/productlist" className="FormField__Button3">Cancel</Link>
                   </div>

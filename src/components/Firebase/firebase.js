@@ -1,6 +1,7 @@
 import app from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
+import 'firebase/storage';
 
 const config = {
     apiKey: "AIzaSyBH2VyuGRRyJGt2rBKnVPCgOnWVDkLGP2Q",
@@ -18,6 +19,7 @@ class Firebase {
     app.initializeApp(config);
     this.auth = app.auth();
     this.db = app.database();
+    this.storage = app.storage();
   }
 
   /* Auth API for signing in*/
@@ -33,4 +35,8 @@ class Firebase {
   user = uid => this.db.ref(`users/${uid}`);
   users = () => this.db.ref('users');
 }
+
+const storage = Firebase.storage();
+
+export { storage }
 export default Firebase;

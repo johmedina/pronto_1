@@ -4,6 +4,11 @@ import { withFirebase } from './Firebase';
 import { compose } from 'recompose';
 import '../App.css';
 
+const SignInPage = () => (
+  <div>
+    <SignInForm />
+  </div>
+)
 
 const INITIAL_STATE = {
   email: '',
@@ -22,6 +27,7 @@ class SignInFormBase extends Component {
       this.props.firebase
         .doSignInWithEmailAndPassword(email, password)
         .then(() => {
+          console.log('logging in user')
           this.setState({ ...INITIAL_STATE });
           this.props.history.push('/productlist');
         })
@@ -34,9 +40,6 @@ class SignInFormBase extends Component {
     onChange = event => {
       this.setState({ [event.target.name]: event.target.value });
     };
-
-
-
 
     render() {
       const { email, password, error } = this.state;
@@ -97,9 +100,11 @@ class SignInFormBase extends Component {
     }
 }
 
-const SignInPage = compose(
+const SignInForm = compose(
   withRouter,
   withFirebase,
 )(SignInFormBase);
 
 export default SignInPage;
+
+export { SignInForm }
