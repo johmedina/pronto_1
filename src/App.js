@@ -3,8 +3,6 @@ import {Switch, Route} from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SignInPage from './components/SignInPage';
-import Navbar from './components/Navbar';
-import Product from './components/Product';
 import Details from './components/Details';
 import Default from './components/Default';
 import Productlist from './components/Productlist';
