@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
 import { storage } from "./Firebase";
 
-
 export default class Additem extends Component {
 
   constructor(props) {
@@ -19,12 +18,13 @@ export default class Additem extends Component {
       progress: '',
     };
 
+    this.onChange = this.onChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
 
-  onChange(e){
+  onChange = e => {
     let files=e.target.files;
 
     let reader = new FileReader();
@@ -33,21 +33,23 @@ export default class Additem extends Component {
       console.log("img data", e.target.result)
     }
 
-    if (e.target.files[0]) {
-      this.setState({image: e.target.files[0]});
+    if (files[0]) {
+      console.log(files[0])
+      this.setState({image: files[0]}, function(){console.log(this.state.image)});
+      // console.log(this.state.image)
     }
-  }
+  };
 
-  handleSubmit(e) {
-    e.preventDefault();
+  handleSubmit = () => {
+    // e.preventDefault();
+    console.log('Handling submit')
+    console.log(this.state.image)
 
     const uploadTask = storage.ref(`images/${this.state.image.name}`).put(this.state.image);
     uploadTask.on(
       "state_changed",
       snapshot => {
-        const progress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
+        console.log(snapshot)
       },
       error => {
         console.log(error);
@@ -66,7 +68,7 @@ export default class Additem extends Component {
 
     //console.log('The form was submitted with the following data:');
     //console.log(this.state);
-  }
+  };
 
   handleChange(e) {
       let target = e.target;
@@ -76,7 +78,7 @@ export default class Additem extends Component {
       this.setState({
         [name]: value
       });
-  }
+  };
 
   render() {
     return (
@@ -109,6 +111,8 @@ export default class Additem extends Component {
             <div onSubmit={this.onFormSubmit} className="UploadButtons">
               <input type="file" name="file4" onChange={(e)=>this.onChange(e)} />
             </div>
+
+            <button className="FormField__Button2 mr-20" style={{marginLeft:'42%', marginTop:'100px'}} onClick={this.handleSubmit}>Upload</button>
           </div>
 
           {/* Create a form for item details */}
@@ -161,7 +165,6 @@ export default class Additem extends Component {
               </div>
             </div>
           </div>
-
       </React.Fragment>
     )
   }

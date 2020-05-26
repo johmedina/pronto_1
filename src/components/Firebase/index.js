@@ -2,14 +2,14 @@ import firebase from "firebase/app";
 import "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBfOh7yoqgGMrMsTxoKoMhP6_9bkUDP0i0",
-  authDomain: "fir-react-upload-5daa4.firebaseapp.com",
-  databaseURL: "https://fir-react-upload-5daa4.firebaseio.com",
-  projectId: "fir-react-upload-5daa4",
-  storageBucket: "fir-react-upload-5daa4.appspot.com",
-  messagingSenderId: "320567469168",
-  appId: "1:320567469168:web:32ea5afe821f2b2cc800b5",
-  measurementId: "G-BLDN7GB52Y"
+    apiKey: "AIzaSyBH2VyuGRRyJGt2rBKnVPCgOnWVDkLGP2Q",
+    authDomain: "pronto-2020.firebaseapp.com",
+    databaseURL: "https://pronto-2020.firebaseio.com",
+    projectId: "pronto-2020",
+    storageBucket: "pronto-2020.appspot.com",
+    messagingSenderId: "169118528141",
+    appId: "1:169118528141:web:461488bb88b8dd5347e8c4",
+    measurementId: "G-EVN4Z9BT84"
 };
 
 firebase.initializeApp(firebaseConfig);
