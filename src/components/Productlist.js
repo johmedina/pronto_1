@@ -4,8 +4,33 @@ import Product from './Product';
 import Additem from './Additem';
 import {ProductConsumer} from '../context';
 
+import { db, auth } from "./Firebase";
 
 export default class Productlist extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      dbSnapshot: {},
+      
+    };
+  }
+
+  componentDidMount() {
+    db.ref("bershka").on("value", snapshot => {
+      let categories= [];
+      snapshot.forEach(snap => {
+        categories.push(snap.val());
+      });
+      this.setState({ dbSnapshot: categories }, function(){console.log(this.state.dbSnapshot)});
+
+    var user = auth.currentUser;
+    if (user) {
+      console.log('user is: ', user)
+    }
+    });
+  };
+
+
   render() {
     return (
       <React.Fragment>
