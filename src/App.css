@@ -311,6 +311,14 @@
   width: 50%;
   background-color: white;
   color: black;
+  margin-left: 3%;
+}
+
+.Photos {
+  flex:1;
+  resizeMode: 'contain';
+  width: 50%;
+  height: 25%;
 }
 
 .MyTitle {

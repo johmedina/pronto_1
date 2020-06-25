@@ -66,8 +66,8 @@ export default class Additem extends Component {
     this.imagesToStorage()
     // this.updateDb()
     // Timeout is needed for illustrations to load before uploading to the database
-    setTimeout(()=>{console.log('wait for images to store')}, 10000)
-    setTimeout(()=>{this.updateDb()}, 11000)
+    setTimeout(()=>{console.log('wait for images to store')}, 20000)
+    setTimeout(()=>{this.updateDb()}, 21000)
     
   
   };
@@ -91,7 +91,7 @@ export default class Additem extends Component {
         },
         () => {
           storage
-            .ref("images")
+            .ref(`images/${auth.currentUser.uid}/${this.state.itemcode}`)
             .child(image.name)
             .getDownloadURL()
             .then(url => {
