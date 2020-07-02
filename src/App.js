@@ -8,6 +8,8 @@ import Default from './components/Default';
 import Productlist from './components/Productlist';
 import Additem from './components/Additem';
 import EditItem from './components/Edititem';
+import HomePage from './components/Homepage';
+
 
 
 class App extends Component {
@@ -24,6 +26,7 @@ class App extends Component {
         <React.Fragment>
           <Switch>
             <Route exact path="/" component={SignInPage} />
+            <Route path="/home" component={HomePage} />
             <Route path="/productlist" component={Productlist} />
             <Route path="/details" component={Details} />
             <Route path="/additem" component={Additem} />

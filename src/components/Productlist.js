@@ -16,17 +16,14 @@ export default class Productlist extends Component {
   }
 
   componentDidMount() {
-    db.ref("bershka").on("value", snapshot => {
+    db.ref(`${auth.currentUser.uid}`).on("value", snapshot => {
       let categories= [];
+      let store = [];
       snapshot.forEach(snap => {
-        categories.push(snap.val());
+        categories.push((snap.key));
+        store.push(snap.val())
       });
-      this.setState({ dbSnapshot: categories }, function(){console.log(this.state.dbSnapshot)});
-
-    var user = auth.currentUser;
-    if (user) {
-      console.log('user is: ', user)
-    }
+      this.setState({ dbSnapshot: categories, storeInfo:store[1].shop }, function(){console.log(this.state.dbSnapshot, this.state.storeInfo)});
     });
   };
 
@@ -43,7 +40,7 @@ export default class Productlist extends Component {
       </Link>
 
         <div className="Store_Name">
-        Virgin Megastore
+          {this.state.storeInfo}
         </div>
 
         <div>
@@ -61,6 +58,7 @@ export default class Productlist extends Component {
         <ProductConsumer>
         { value => {
           return value.products.map(product =>{
+            // key should be the product id of one product - product should come from the database
             return <Product key="product.id" product={product} />
           })
         }}

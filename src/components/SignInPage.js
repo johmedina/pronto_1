@@ -28,7 +28,7 @@ class SignInPage extends Component {
       .then(() => {
         console.log(this.state.email, this.state.password)
         console.log('Success?????')
-        this.props.history.push("/productlist")
+        this.props.history.push("/home")
       })
       .catch(function(error) {
         // Handle Errors here.

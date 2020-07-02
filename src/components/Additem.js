@@ -63,24 +63,29 @@ export default class Additem extends Component {
     // console.log(this.state.images)
     
     // setTimeout(()=>{this.imagesToStorage()}, 30000)
-    this.imagesToStorage()
+    // this.imagesToStorage()
+    var ilen = this.state.images.length;
+    var i = 0;
+    var image = "";
+    var setOfImages = [];
+    for(i; i<ilen; i++){
+      console.log('inside for loop')
+      image = this.state.images[i]
+      this.imagesToStorage(image, this.state.illustration)
+    }
     // this.updateDb()
     // Timeout is needed for illustrations to load before uploading to the database
     setTimeout(()=>{console.log('wait for images to store')}, 20000)
     setTimeout(()=>{this.updateDb()}, 21000)
+
+    
     
   
   };
 
-
-  imagesToStorage = () => {
-    var ilen = this.state.images.length;
-    console.log(ilen);
-
-    for(var i=0; i<ilen; i++){
-      var image = this.state.images[i]
-      // console.log(i)
-      const uploadTask = storage.ref(`images/${auth.currentUser.uid}/${this.state.itemcode}/${image.name}`).put(image);
+  imagesToStorage = (image, setOfImages) => {
+      var uploadTask = storage.ref(`images/${auth.currentUser.uid}/${this.state.itemcode}/${image.name}`).put(image);
+      console.log(image)
       uploadTask.on(
         "state_changed",
         snapshot => {
@@ -90,19 +95,20 @@ export default class Additem extends Component {
           console.log(error);
         },
         () => {
+          console.log(image.name)
           storage
             .ref(`images/${auth.currentUser.uid}/${this.state.itemcode}`)
             .child(image.name)
             .getDownloadURL()
             .then(url => {
               console.log(url)
-              var setOfImages = this.state.illustration.concat(url)
+              setOfImages = this.state.illustration.concat(url)
               this.setState({illustration: setOfImages}, function(){console.log('imagesToStorage illustrations', this.state.illustration)})
             });
         }
       );
-    }
-  };
+
+  }
 
   updateDb = () => {
     console.log('updateDb illustrations', this.state.illustration)
