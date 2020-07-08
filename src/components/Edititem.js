@@ -24,6 +24,7 @@ export default class Edititem extends Component {
       progress: '',
       images: [],
       dbSnapshot: {},
+      dbProduct: '',
     };
 
     this.onChange = this.onChange.bind(this);
@@ -31,16 +32,37 @@ export default class Edititem extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.imagesToStorage = this.imagesToStorage.bind(this);
     this.updateDb = this.updateDb.bind(this);
+    this.deleteItem = this.deleteItem.bind(this);
+
   }
 
   componentDidMount() {
-    db.ref(`${auth.currentUser.uid}/Dresses`).on("value", snapshot => {
-      let categories= [];
-      snapshot.forEach(snap => {
-        categories.push(snap.val());
-      });
-      this.setState({ dbSnapshot: categories[0] }, function(){console.log(this.state.dbSnapshot, this.state.dbSnapshot.illustration)});
+    console.log(this.props.location.state.product, this.props.location.state.category)
+    var currentProduct = this.props.location.state.product
+    var currentCat = this.props.location.state.category
+    db.ref(`${auth.currentUser.uid}/${currentCat}/${currentProduct}`).on("value", snapshot => {
+      var details= snapshot.val();
+      console.log('db ref details')
+      if (details != null){
+        this.setState({ 
+          dbProduct: currentProduct,
+          category: currentCat,
+          dbSnapshot: details,
+          title: details.title,
+          itemcode: details.itemID,
+          category: currentCat,
+          price: details.price,
+          description: details.desc,
+          availability: details.malls,
+          sizes: details.sizes,
+          colors: details.colors,
+          images: details.illustration,
+        }, 
+          function(){console.log(this.state.dbSnapshot, this.state.title)});
+      }
+      
     });
+
   };
 
 
@@ -68,27 +90,26 @@ export default class Edititem extends Component {
     // Uploding images to Firebase storage 
     
     console.log('Handling submit')
-    // console.log(this.state.images)
     
-    // setTimeout(()=>{this.imagesToStorage()}, 30000)
-    this.imagesToStorage()
-    // this.updateDb()
+    var ilen = this.state.images.length;
+    var i = 0;
+    var image = "";
+    var setOfImages = [];
+    for(i; i<ilen; i++){
+      console.log('inside for loop')
+      image = this.state.images[i]
+      this.imagesToStorage(image, this.state.illustration)
+    }
+  
     // Timeout is needed for illustrations to load before uploading to the database
     setTimeout(()=>{console.log('wait for images to store')}, 20000)
-    setTimeout(()=>{this.updateDb()}, 21000)
-    
+    setTimeout(()=>{this.updateDb()}, 21000) 
   
   };
 
-
-  imagesToStorage = () => {
-    var ilen = this.state.images.length;
-    console.log(ilen);
-
-    for(var i=0; i<ilen; i++){
-      var image = this.state.images[i]
-      // console.log(i)
-      const uploadTask = storage.ref(`images/${auth.currentUser.uid}/${this.state.itemcode}/${image.name}`).put(image);
+  imagesToStorage = (image, setOfImages) => {
+      var uploadTask = storage.ref(`images/${auth.currentUser.uid}/${this.state.category}/${this.state.itemcode}/${image.name}`).put(image);
+      console.log(image)
       uploadTask.on(
         "state_changed",
         snapshot => {
@@ -98,19 +119,20 @@ export default class Edititem extends Component {
           console.log(error);
         },
         () => {
+          console.log(image.name)
           storage
             .ref(`images/${auth.currentUser.uid}/${this.state.itemcode}`)
             .child(image.name)
             .getDownloadURL()
             .then(url => {
               console.log(url)
-              var setOfImages = this.state.illustration.concat(url)
-              this.setState({illustration: setOfImages}, function(){console.log('imagesToStorage illustrations', this.state.illustration[0])})
+              setOfImages = this.state.illustration.concat(url)
+              this.setState({illustration: setOfImages}, function(){console.log('imagesToStorage illustrations', this.state.illustration)})
             });
         }
       );
-    }
-  };
+
+  }
 
   updateDb = () => {
     console.log('updateDb illustrations', this.state.illustration)
@@ -122,14 +144,17 @@ export default class Edititem extends Component {
       desc: this.state.description,
       price: this.state.price,
       colors: this.state.colors,
-      mallls: this.state.availability,
+      malls: this.state.availability,
       sizes: this.state.sizes,
       fav: 'heart',
+      itemID: this.state.itemcode,
       
     })
+    .then(() => this.props.history.goBack())
     console.log('end db')
 
   };
+
 
   handleChange(e) {
       let target = e.target;
@@ -142,6 +167,36 @@ export default class Edititem extends Component {
 
       // console.log('after', this.state.title)
       // console.log('after', this.state.category)
+  };
+
+  deleteItem = () => {
+    // Delete from database
+    var adaRef = db.ref(`/${auth.currentUser.uid}/${this.state.category}/${this.state.dbProduct}`)
+    adaRef.remove()
+      .then(function() {
+        console.log("Remove succeeded.")
+      })
+      .catch(function(error) {
+        console.log("Remove failed: " + error.message)
+      });
+
+    // Delete from storage
+    var images = this.state.images;
+    var image = "";
+    console.log('storage images to delete', images)
+    var ilen = images.length;
+    var i=0;
+    for (i;  i<ilen; i++){
+      image = images[i];
+      console.log('image inside delete', image)
+      var stoRef  = storage.refFromURL(`${image}`);
+      stoRef.delete()
+        .then(function() { console.log('storage removal success')})
+        .catch(function(error) {
+          console.log("Storage Remove failed: " + error.message)
+        });
+    }
+    
   };
 
   render() {
@@ -158,15 +213,15 @@ export default class Edititem extends Component {
         <div className="MyTitle">EDIT ITEM </div>
         <div className="App">
           <div className="App__Aside2">
-            <div className="FormField__Label2"> Upload Photos </div>
+            <div className="FormField__Label2"> Current Photos </div>
 
             <div>
               {this.state.dbSnapshot.illustration && this.state.dbSnapshot.illustration.map((image, index) => {
-                return <img src={image} key={index}/>
+                return <img className="col-lg-3" src={image} key={index}/>
               })}
             </div>
 
-            <div onSubmit={this.onFormSubmit} className="UploadButtons">
+            {/* <div onSubmit={this.onFormSubmit} className="UploadButtons">
               <input type="file" name="file1" onChange={(e)=>this.onChange(e)} />
             </div>
 
@@ -180,7 +235,7 @@ export default class Edititem extends Component {
 
             <div onSubmit={this.onFormSubmit} className="UploadButtons">
               <input type="file" name="file4" onChange={(e)=>this.onChange(e)} />
-            </div>
+            </div> */}
           </div>
           {/* Create a form for item details */}
           <div className="App__Form2">
@@ -237,7 +292,8 @@ export default class Edititem extends Component {
                 </form>
               </div>
               <button className="FormField__Button2 mr-20" onClick={this.handleSubmit}>Apply</button>
-              <Link to="/productlist" className="FormField__Button2">Save</Link>
+              <button className="FormField__Button2 mr-20" onClick={this.deleteItem}>Delete</button>
+              {/* <Link to="/productlist" className="FormField__Button2">Delete</Link> */}
               <Link to="/productlist" className="FormField__Button3">Cancel</Link>
             </div> 
                   

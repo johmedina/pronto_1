@@ -34,8 +34,9 @@ export default class Category extends Component {
             justify="space-evenly"
             alignItems="center">
                 
-            <Link to="/productlist">
+            <Link to = {{ pathname:"/productlist", state:{category: this.props.category} }}>
                 <Paper className="names">{this.props.category}</Paper>
+                {/* <Productlist category={this.props.category}/> */}
             </Link>
         
         </Grid>

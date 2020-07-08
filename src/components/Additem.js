@@ -84,7 +84,7 @@ export default class Additem extends Component {
   };
 
   imagesToStorage = (image, setOfImages) => {
-      var uploadTask = storage.ref(`images/${auth.currentUser.uid}/${this.state.itemcode}/${image.name}`).put(image);
+      var uploadTask = storage.ref(`images/${auth.currentUser.uid}/${this.state.category}/${this.state.itemcode}/${image.name}`).put(image);
       console.log(image)
       uploadTask.on(
         "state_changed",
@@ -97,7 +97,7 @@ export default class Additem extends Component {
         () => {
           console.log(image.name)
           storage
-            .ref(`images/${auth.currentUser.uid}/${this.state.itemcode}`)
+            .ref(`images/${auth.currentUser.uid}/${this.state.category}/${this.state.itemcode}`)
             .child(image.name)
             .getDownloadURL()
             .then(url => {
@@ -120,11 +120,13 @@ export default class Additem extends Component {
       desc: this.state.description,
       price: this.state.price,
       colors: this.state.colors,
-      mallls: this.state.availability,
+      malls: this.state.availability,
       sizes: this.state.sizes,
       fav: 'heart',
+      itemID: this.state.itemcode,
       
     })
+    .then(() => this.props.history.goBack())
     console.log('end db')
 
   };

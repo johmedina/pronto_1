@@ -69,7 +69,7 @@ export default class HomePage extends Component {
     <CatWrapper>
         <div className="row">
             {this.state.dbSnapshot.map((categories) => {
-                if (categories != "Info"){
+                if (categories !== "Info"){
                     return (
                         <Category category={categories}/>
                     )

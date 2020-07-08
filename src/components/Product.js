@@ -7,14 +7,15 @@ import PropTypes from 'prop-types';
 
 export default class Product extends Component {
   render() {
-    const {id, title, img, price} = this.props.product;
+    const {colors, title, illustration, price, itemID} = this.props.product;
+    console.log(this.props.product)
     return (
       <ProductWrapper className="col-12 mx-auto col-md-6 col-lg-3 my-3">
         <div className="card">
           <div className="img-container p-5" onClick={()=>console.log('clicked')}>
-            <img src={img} alt="prod" className="card-img-top" />
+            <img src={illustration} key={itemID} alt="prod" className="card-img-top" />
 
-            <Link to="/edititem">
+            <Link to = {{ pathname:"/edititem", state:{product: itemID, category:this.props.category} }}>
               <button className="edit-btn" onClick={()=>{console.log('edit pls')}}>
                 Edit Item
               </button>
@@ -22,11 +23,11 @@ export default class Product extends Component {
           </div>
 
           {/*card footer */}
-          <div className="card-footer d-flex justify-content-between">
+          <div className="card-footer">
             <p className="align-self-center mb-0">
             {title}
             </p>
-            <h5> <span className="mr-1"> QR</span> {price} </h5>
+            <h5 className="footer-text"> <span className="mr-1"> QR</span> {price} </h5>
           </div>
         </div>
       </ProductWrapper>
@@ -34,32 +35,45 @@ export default class Product extends Component {
   }
 }
 
-Product.propTypes = {
-  product:PropTypes.shape({
-    id:PropTypes.number,
-    img:PropTypes.string,
-    title: PropTypes.string,
-    price: PropTypes.number,
-    inCart: PropTypes.bool
-  }).isRequired
-};
+// Product.propTypes = {
+//   product:PropTypes.shape({
+//     id:PropTypes.number,
+//     img:PropTypes.string,
+//     title: PropTypes.string,
+//     price: PropTypes.number,
+//     inCart: PropTypes.bool
+//   }).isRequired
+// };
 
 const ProductWrapper = styled.div `
 .card {
   border-color: transparent;
   transition: all 1s linear;
+  height: 450px;
+  width: 100%;
 }
 
 .card-footer {
   background: transparent;
   border-top: black;
   transition: all 1s linear;
+  justify-content: space-between;
+  alignSelf: center;
+  flexDirection: row;
+  flex: 1;
+  position: absolute;
+  top: 365px;
+  left: 30%;
 }
 &:hover{
   .card{
     border: 0.04rem solid rgba(0,0,0,2);
     box-shadow: 2px 2px 5px 0px rgba(0,0,0,2);
   }
+}
+
+.footer-text {
+  right: 20px;
 }
 
 .img-container{
