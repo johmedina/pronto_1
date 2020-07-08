@@ -170,16 +170,7 @@ export default class Edititem extends Component {
   };
 
   deleteItem = () => {
-    // Delete from database
-    var adaRef = db.ref(`/${auth.currentUser.uid}/${this.state.category}/${this.state.dbProduct}`)
-    adaRef.remove()
-      .then(function() {
-        console.log("Remove succeeded.")
-      })
-      .catch(function(error) {
-        console.log("Remove failed: " + error.message)
-      });
-
+    
     // Delete from storage
     var images = this.state.images;
     var image = "";
@@ -196,6 +187,18 @@ export default class Edititem extends Component {
           console.log("Storage Remove failed: " + error.message)
         });
     }
+
+    // Delete from database
+    var adaRef = db.ref(`/${auth.currentUser.uid}/${this.state.category}/${this.state.dbProduct}`)
+    adaRef.remove()
+      // .then(function() {
+      //   console.log("Remove succeeded.")
+      //   this.props.history.goBack()
+      // })
+      .then(() => this.props.history.goBack())
+      .catch(function(error) {
+        console.log("Remove failed: " + error.message)
+      });
     
   };
 
@@ -293,8 +296,7 @@ export default class Edititem extends Component {
               </div>
               <button className="FormField__Button2 mr-20" onClick={this.handleSubmit}>Apply</button>
               <button className="FormField__Button2 mr-20" onClick={this.deleteItem}>Delete</button>
-              {/* <Link to="/productlist" className="FormField__Button2">Delete</Link> */}
-              <Link to="/productlist" className="FormField__Button3">Cancel</Link>
+              <button className="FormField__Button3 mr-20" onClick={this.props.history.goBack}>Cancel</button>
             </div> 
                   
             

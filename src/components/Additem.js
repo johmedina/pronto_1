@@ -230,9 +230,10 @@ export default class Additem extends Component {
 
                 </div>
                   
-                <button className="FormField__Button2 mr-20" onClick={this.handleSubmit}>Apply</button>
-                <Link to="/productlist" className="FormField__Button2">Save</Link>
-                <Link to="/productlist" className="FormField__Button3">Cancel</Link>
+                <button className="FormField__Button2 mr-20 mt-4" onClick={this.handleSubmit}>Save</button>
+                {/* <Link to="/productlist" className="FormField__Button2">Save</Link> */}
+                <button className="FormField__Button3 mr-20" onClick={this.props.history.goBack}>Cancel</button>
+                {/* <Link to="/productlist" className="FormField__Button3 mr-60">Cancel</Link> */}
 
               </div>
             </div>
