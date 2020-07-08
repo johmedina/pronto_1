@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import { withFirebase } from './Firebase';
-import { compose } from 'recompose';
+import { Link, withRouter, Redirect, useHistory } from 'react-router-dom';
+// import { withFirebase } from './Firebase';
+// import { compose } from 'recompose';
+import { storage, db, auth } from "./Firebase";
 import '../App.css';
 
 
@@ -11,25 +12,30 @@ const INITIAL_STATE = {
   error: null,
 };
 
-class SignInFormBase extends Component {
+class SignInPage extends Component {
     constructor(props) {
         super(props);
         this.state = { ...INITIAL_STATE };
+      
+        this.onSubmit = this.onSubmit.bind(this);
     }
 
+    
+    
+
     onSubmit = event => {
-      const { email, password } = this.state;
-      this.props.firebase
-        .doSignInWithEmailAndPassword(email, password)
-        .then(() => {
-          this.setState({ ...INITIAL_STATE });
-          this.props.history.push('/productlist');
-        })
-        .catch(error => {
-          this.setState({ error });
-        });
-      event.preventDefault();
-    };
+      auth.signInWithEmailAndPassword(this.state.email, this.state.password)
+      .then(() => {
+        console.log(this.state.email, this.state.password)
+        console.log('Success?????')
+        this.props.history.push("/home")
+      })
+      .catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+      });
+    }
 
     onChange = event => {
       this.setState({ [event.target.name]: event.target.value });
@@ -80,15 +86,20 @@ class SignInFormBase extends Component {
                   />
                 </div>
 
-                <div className="FormField">
+                {/* <div className="FormField">
                   <Link to = "/productlist">
-                  <button className="FormField__Button mr-20" disabled={isInvalid} type="submit">
+                  <button className="FormField__Button mr-20" disabled={isInvalid} type="submit" onClick={this.onSubmit}>
                     Sign In
                   </button>
                   </Link>
-                </div>
+                </div> */}
                 {error && <p>{error.message}</p>}
               </form>
+
+              <div className="FormField">
+                <button className="FormField__Button mr-20" disabled={isInvalid} type="submit" onClick={this.onSubmit}>Sign In</button>
+              </div>
+              
 
             </div>
           </div>
@@ -97,9 +108,9 @@ class SignInFormBase extends Component {
     }
 }
 
-const SignInPage = compose(
-  withRouter,
-  withFirebase,
-)(SignInFormBase);
+// const SignInPage = compose(
+//   withRouter,
+//   withFirebase,
+// )(SignInFormBase);
 
 export default SignInPage;

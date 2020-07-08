@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.10.2",
     "aws-amplify": "^2.2.0",
     "aws-amplify-react": "^3.1.1",
     "bootstrap": "^4.3.1",
@@ -10,6 +11,7 @@
     "re-base": "^4.0.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-images": "^1.1.7",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.1.1",
     "recompose": "^0.30.0",

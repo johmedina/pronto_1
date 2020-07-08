@@ -4,8 +4,42 @@ import Product from './Product';
 import Additem from './Additem';
 import {ProductConsumer} from '../context';
 
+import { db, auth } from "./Firebase";
 
 export default class Productlist extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      dbSnapshot: [],
+      storeInfo: [],
+      itemIDs: [],
+    };
+  }
+
+  componentDidMount() {
+    console.log(this.props.location.state.category)
+    var currentCategory = this.props.location.state.category
+    db.ref(`${auth.currentUser.uid}`).on("value", snapshot => {
+      let store = [];
+      snapshot.forEach(snap => {
+        store.push(snap.val())
+      });
+      this.setState({ storeInfo:store[1].shop }, function(){console.log(this.state.storeInfo)});
+    });
+
+    db.ref(`${auth.currentUser.uid}/${currentCategory}`).on("value", snapshot => {
+      let items= [];
+      let itemIDs = [];
+      snapshot.forEach(snap => {
+        items.push(snap.val())
+        itemIDs.push(snap.key)
+      });
+      this.setState({ dbSnapshot: items, itemIDs: itemIDs}, function(){console.log('snapshot', this.state.dbSnapshot, this.state.itemIDs)});
+    });
+    
+  };
+
+
   render() {
     return (
       <React.Fragment>
@@ -18,7 +52,7 @@ export default class Productlist extends Component {
       </Link>
 
         <div className="Store_Name">
-        Virgin Megastore
+          {this.state.storeInfo}
         </div>
 
         <div>
@@ -33,13 +67,21 @@ export default class Productlist extends Component {
       </div>
 
       <div className="row">
-        <ProductConsumer>
+        {/* <ProductConsumer>
         { value => {
           return value.products.map(product =>{
+            // key should be the product id of one product - product should come from the database
             return <Product key="product.id" product={product} />
           })
         }}
-        </ProductConsumer>
+        </ProductConsumer> */}
+        {this.state.dbSnapshot.map((items) => {  
+          console.log('productlist items: ', items)  
+          return (
+              <Product product={items} category={this.props.location.state.category}/>
+          )
+                
+        })}
       </div>
 
 
