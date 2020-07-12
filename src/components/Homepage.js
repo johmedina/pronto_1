@@ -22,14 +22,14 @@ export default class HomePage extends Component {
   }
 
   componentDidMount() {
-    db.ref(`${auth.currentUser.uid}`).on("value", snapshot => {
+    db.ref(`/stores/${auth.currentUser.uid}`).on("value", snapshot => {
       let categories= [];
       let store = [];
       snapshot.forEach(snap => {
         categories.push((snap.key));
         store.push(snap.val())
       });
-      this.setState({ dbSnapshot: categories, storeInfo:store[1].shop }, function(){console.log(this.state.dbSnapshot, this.state.storeInfo)});
+      this.setState({ dbSnapshot: categories, storeInfo:store[0].shop }, function(){console.log(this.state.dbSnapshot, this.state.storeInfo)});
     });
   };
 
@@ -69,7 +69,7 @@ export default class HomePage extends Component {
     <CatWrapper>
         <div className="row">
             {this.state.dbSnapshot.map((categories) => {
-                if (categories !== "Info"){
+                if (categories !== "0info"){
                     return (
                         <Category category={categories}/>
                     )

@@ -19,15 +19,17 @@ export default class Productlist extends Component {
   componentDidMount() {
     console.log(this.props.location.state.category)
     var currentCategory = this.props.location.state.category
-    db.ref(`${auth.currentUser.uid}`).on("value", snapshot => {
+    // fetch the shop name
+    db.ref(`/stores/${auth.currentUser.uid}`).on("value", snapshot => {
       let store = [];
       snapshot.forEach(snap => {
         store.push(snap.val())
       });
-      this.setState({ storeInfo:store[1].shop }, function(){console.log(this.state.storeInfo)});
+      this.setState({ storeInfo:store[0].shop }, function(){console.log(this.state.storeInfo)});
     });
 
-    db.ref(`${auth.currentUser.uid}/${currentCategory}`).on("value", snapshot => {
+    // fetch the items to be displayed
+    db.ref(`/stores/${auth.currentUser.uid}/${currentCategory}`).on("value", snapshot => {
       let items= [];
       let itemIDs = [];
       snapshot.forEach(snap => {

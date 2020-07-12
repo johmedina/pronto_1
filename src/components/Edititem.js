@@ -40,7 +40,7 @@ export default class Edititem extends Component {
     console.log(this.props.location.state.product, this.props.location.state.category)
     var currentProduct = this.props.location.state.product
     var currentCat = this.props.location.state.category
-    db.ref(`${auth.currentUser.uid}/${currentCat}/${currentProduct}`).on("value", snapshot => {
+    db.ref(`/stores/${auth.currentUser.uid}/${currentCat}/${currentProduct}`).on("value", snapshot => {
       var details= snapshot.val();
       console.log('db ref details')
       if (details != null){
@@ -137,7 +137,7 @@ export default class Edititem extends Component {
   updateDb = () => {
     console.log('updateDb illustrations', this.state.illustration)
     //Updating the realtime database 
-    db.ref(`/${auth.currentUser.uid}/${this.state.category}/${this.state.itemcode}`)
+    db.ref(`/stores/${auth.currentUser.uid}/${this.state.category}/${this.state.itemcode}`)
     .set({
       title: this.state.title,
       illustration: this.state.illustration,
@@ -189,7 +189,7 @@ export default class Edititem extends Component {
     }
 
     // Delete from database
-    var adaRef = db.ref(`/${auth.currentUser.uid}/${this.state.category}/${this.state.dbProduct}`)
+    var adaRef = db.ref(`/stores/${auth.currentUser.uid}/${this.state.category}/${this.state.dbProduct}`)
     adaRef.remove()
       // .then(function() {
       //   console.log("Remove succeeded.")

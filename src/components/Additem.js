@@ -113,7 +113,7 @@ export default class Additem extends Component {
   updateDb = () => {
     console.log('updateDb illustrations', this.state.illustration)
     //Updating the realtime database 
-    db.ref(`/${auth.currentUser.uid}/${this.state.category}/${this.state.itemcode}`)
+    db.ref(`/stores/${auth.currentUser.uid}/${this.state.category}/${this.state.itemcode}`)
     .set({
       title: this.state.title,
       illustration: this.state.illustration,

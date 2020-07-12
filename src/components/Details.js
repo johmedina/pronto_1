@@ -1,3 +1,5 @@
+// THIS PAGE IS CURRENTLY NOT BEING USED - MIGHT USE IT LATER 
+
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
 import {ProductConsumer} from '../context';
