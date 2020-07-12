@@ -11,6 +11,7 @@ export default class Additem extends Component {
       title: '',
       itemcode: '',
       category: '',
+      gender: '',
       price: '',
       description: '',
       availability: '',
@@ -84,7 +85,7 @@ export default class Additem extends Component {
   };
 
   imagesToStorage = (image, setOfImages) => {
-      var uploadTask = storage.ref(`images/${auth.currentUser.uid}/${this.state.category}/${this.state.itemcode}/${image.name}`).put(image);
+      var uploadTask = storage.ref(`images/${auth.currentUser.uid}/${this.state.gender}/${this.state.category}/${this.state.itemcode}/${image.name}`).put(image);
       console.log(image)
       uploadTask.on(
         "state_changed",
@@ -97,7 +98,7 @@ export default class Additem extends Component {
         () => {
           console.log(image.name)
           storage
-            .ref(`images/${auth.currentUser.uid}/${this.state.category}/${this.state.itemcode}`)
+            .ref(`images/${auth.currentUser.uid}/${this.state.gender}/${this.state.category}/${this.state.itemcode}`)
             .child(image.name)
             .getDownloadURL()
             .then(url => {
@@ -113,7 +114,7 @@ export default class Additem extends Component {
   updateDb = () => {
     console.log('updateDb illustrations', this.state.illustration)
     //Updating the realtime database 
-    db.ref(`/stores/${auth.currentUser.uid}/${this.state.category}/${this.state.itemcode}`)
+    db.ref(`/stores/${auth.currentUser.uid}/${this.state.gender}/${this.state.category}/${this.state.itemcode}`)
     .set({
       title: this.state.title,
       illustration: this.state.illustration,
@@ -124,6 +125,7 @@ export default class Additem extends Component {
       sizes: this.state.sizes,
       fav: 'heart',
       itemID: this.state.itemcode,
+      gender: this.state.gender,
       
     })
     .then(() => this.props.history.goBack())
@@ -148,7 +150,7 @@ export default class Additem extends Component {
     return (
       <React.Fragment>
         <div className="HeaderUp">
-          <Link to='/productlist'>
+          <Link to='/home'>
             <img className="Small_Logo"
             src="https://live.staticflickr.com/65535/48713562801_2b7787f5b8_o.png"
             alt="logo"/>
@@ -177,6 +179,12 @@ export default class Additem extends Component {
                     <label className="FormField__Label2" htmlFor="category">Category</label>
                     <input type="text" id="category" className="FormField__Input2" placeholder="Enter item category"
                       name="category" value={this.state.category} onChange={this.handleChange} />
+                  </div>
+
+                  <div className="FormField">
+                    <label className="FormField__Label2" htmlFor="category">Women / Men / Kids</label>
+                    <input type="text" id="gender" className="FormField__Input2" placeholder="Enter item section"
+                      name="gender" value={this.state.gender} onChange={this.handleChange} />
                   </div>
 
                   <div className="FormField">

@@ -15,6 +15,7 @@ export default class Edititem extends Component {
       title: '',
       itemcode: '',
       category: '',
+      gender: '',
       price: '',
       description: '',
       availability: '',
@@ -40,13 +41,16 @@ export default class Edititem extends Component {
     console.log(this.props.location.state.product, this.props.location.state.category)
     var currentProduct = this.props.location.state.product
     var currentCat = this.props.location.state.category
-    db.ref(`/stores/${auth.currentUser.uid}/${currentCat}/${currentProduct}`).on("value", snapshot => {
+    var currentGender = this.props.location.state.gender
+    console.log('gender', currentGender)
+    db.ref(`/stores/${auth.currentUser.uid}/${currentGender}/${currentCat}/${currentProduct}`).on("value", snapshot => {
       var details= snapshot.val();
       console.log('db ref details')
       if (details != null){
         this.setState({ 
           dbProduct: currentProduct,
           category: currentCat,
+          gender: currentGender,
           dbSnapshot: details,
           title: details.title,
           itemcode: details.itemID,
@@ -108,7 +112,7 @@ export default class Edititem extends Component {
   };
 
   imagesToStorage = (image, setOfImages) => {
-      var uploadTask = storage.ref(`images/${auth.currentUser.uid}/${this.state.category}/${this.state.itemcode}/${image.name}`).put(image);
+      var uploadTask = storage.ref(`images/${auth.currentUser.uid}/${this.state.gender}/${this.state.category}/${this.state.itemcode}/${image.name}`).put(image);
       console.log(image)
       uploadTask.on(
         "state_changed",
@@ -121,8 +125,8 @@ export default class Edititem extends Component {
         () => {
           console.log(image.name)
           storage
-            .ref(`images/${auth.currentUser.uid}/${this.state.itemcode}`)
-            .child(image.name)
+          .ref(`images/${auth.currentUser.uid}/${this.state.gender}/${this.state.category}/${this.state.itemcode}`)
+          .child(image.name)
             .getDownloadURL()
             .then(url => {
               console.log(url)
@@ -137,7 +141,7 @@ export default class Edititem extends Component {
   updateDb = () => {
     console.log('updateDb illustrations', this.state.illustration)
     //Updating the realtime database 
-    db.ref(`/stores/${auth.currentUser.uid}/${this.state.category}/${this.state.itemcode}`)
+    db.ref(`/stores/${auth.currentUser.uid}/${this.state.gender}/${this.state.category}/${this.state.itemcode}`)
     .set({
       title: this.state.title,
       illustration: this.state.illustration,
@@ -148,6 +152,7 @@ export default class Edititem extends Component {
       sizes: this.state.sizes,
       fav: 'heart',
       itemID: this.state.itemcode,
+      gender: this.state.gender
       
     })
     .then(() => this.props.history.goBack())
@@ -189,7 +194,7 @@ export default class Edititem extends Component {
     }
 
     // Delete from database
-    var adaRef = db.ref(`/stores/${auth.currentUser.uid}/${this.state.category}/${this.state.dbProduct}`)
+    var adaRef = db.ref(`/stores/${auth.currentUser.uid}/${this.state.gender}/${this.state.category}/${this.state.dbProduct}`)
     adaRef.remove()
       // .then(function() {
       //   console.log("Remove succeeded.")
@@ -206,7 +211,7 @@ export default class Edititem extends Component {
     return (
       <React.Fragment>
         <div className="HeaderUp">
-          <Link to='/productlist'>
+          <Link to='/home'>
             <img className="Small_Logo"
             src="https://live.staticflickr.com/65535/48713562801_2b7787f5b8_o.png"
             alt="logo"/>
@@ -260,6 +265,12 @@ export default class Edititem extends Component {
                     <label className="FormField__Label2" htmlFor="category">Category</label>
                     <input type="text" id="category" className="FormField__Input2" placeholder="Enter item category"
                       name="category" value={this.state.category} onChange={this.handleChange} />
+                  </div>
+
+                  <div className="FormField">
+                    <label className="FormField__Label2" htmlFor="category">Women / Men / Kids</label>
+                    <input type="text" id="gender" className="FormField__Input2" placeholder="Enter item section"
+                      name="gender" value={this.state.gender} onChange={this.handleChange} />
                   </div>
 
                   <div className="FormField">

@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 
 export default class Product extends Component {
   render() {
-    const {colors, title, illustration, price, itemID} = this.props.product;
+    const {colors, title, illustration, price, itemID, gender} = this.props.product;
     console.log(this.props.product)
     return (
       <ProductWrapper className="col-12 mx-auto col-md-6 col-lg-3 my-3">
@@ -15,7 +15,7 @@ export default class Product extends Component {
           <div className="img-container p-5" onClick={()=>console.log('clicked')}>
             <img src={illustration} key={itemID} alt="prod" className="card-img-top" />
 
-            <Link to = {{ pathname:"/edititem", state:{product: itemID, category:this.props.category} }}>
+            <Link to = {{ pathname:"/edititem", state:{product: itemID, category:this.props.category, gender:gender} }}>
               <button className="edit-btn" onClick={()=>{console.log('edit pls')}}>
                 Edit Item
               </button>

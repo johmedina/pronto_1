@@ -19,6 +19,7 @@ export default class Productlist extends Component {
   componentDidMount() {
     console.log(this.props.location.state.category)
     var currentCategory = this.props.location.state.category
+    var currentGender = this.props.location.state.gender
     // fetch the shop name
     db.ref(`/stores/${auth.currentUser.uid}`).on("value", snapshot => {
       let store = [];
@@ -29,7 +30,7 @@ export default class Productlist extends Component {
     });
 
     // fetch the items to be displayed
-    db.ref(`/stores/${auth.currentUser.uid}/${currentCategory}`).on("value", snapshot => {
+    db.ref(`/stores/${auth.currentUser.uid}/${currentGender}/${currentCategory}`).on("value", snapshot => {
       let items= [];
       let itemIDs = [];
       snapshot.forEach(snap => {
@@ -47,7 +48,7 @@ export default class Productlist extends Component {
       <React.Fragment>
       <div className="Home_App">
       {/*Logo in the upper left corner*/}
-      <Link to="/productlist">
+      <Link to="/home">
         <img className="Small_Logo"
         src="https://live.staticflickr.com/65535/48713562801_2b7787f5b8_o.png"
         alt="logo"/>

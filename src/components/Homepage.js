@@ -17,11 +17,14 @@ export default class HomePage extends Component {
     this.state = {
       dbSnapshot: [],
       storeInfo: [],
-      
+      dbWomen: [],
+      dbMen: [],
+      dbKids: [],
     };
   }
 
   componentDidMount() {
+    // store the current brand name
     db.ref(`/stores/${auth.currentUser.uid}`).on("value", snapshot => {
       let categories= [];
       let store = [];
@@ -31,6 +34,34 @@ export default class HomePage extends Component {
       });
       this.setState({ dbSnapshot: categories, storeInfo:store[0].shop }, function(){console.log(this.state.dbSnapshot, this.state.storeInfo)});
     });
+
+    // get women's categories
+    db.ref(`/stores/${auth.currentUser.uid}/Women`).on("value", snapshot => {
+      let categories= [];
+      snapshot.forEach(snap => {
+        categories.push((snap.key));
+      });
+      this.setState({ dbWomen: categories }, function(){console.log('women', this.state.dbWomen)});
+    });
+
+    // get women's categories
+    db.ref(`/stores/${auth.currentUser.uid}/Men`).on("value", snapshot => {
+      let categories= [];
+      snapshot.forEach(snap => {
+        categories.push((snap.key));
+      });
+      this.setState({ dbMen: categories }, function(){console.log('men', this.state.dbMen)});
+    });
+
+    // get women's categories
+    db.ref(`/stores/${auth.currentUser.uid}/Kids`).on("value", snapshot => {
+      let categories= [];
+      snapshot.forEach(snap => {
+        categories.push((snap.key));
+      });
+      this.setState({ dbKids: categories }, function(){console.log('kids', this.state.dbKids)});
+    });
+
   };
 
 
@@ -39,7 +70,7 @@ export default class HomePage extends Component {
       <React.Fragment>
       <div className="Home_App">
       {/*Logo in the upper left corner*/}
-      <Link to="/productlist">
+      <Link to="/home">
         <img className="Small_Logo"
         src="https://live.staticflickr.com/65535/48713562801_2b7787f5b8_o.png"
         alt="logo"/>
@@ -67,14 +98,36 @@ export default class HomePage extends Component {
             </div> */}
     
     <CatWrapper>
+        <div className="titles">
+          WOMEN
+        </div>
         <div className="row">
-            {this.state.dbSnapshot.map((categories) => {
-                if (categories !== "0info"){
-                    return (
-                        <Category category={categories}/>
-                    )
-                }
-                
+            {this.state.dbWomen.map((categories) => {
+              return (
+                  <Category category={categories} gender={'Women'}/>
+              )
+            })}
+        </div>
+
+        <div className="titles">
+          MEN
+        </div>
+        <div className="row">
+            {this.state.dbMen.map((categories) => {
+              return (
+                  <Category category={categories} gender={'Men'}/>
+              )
+            })}
+        </div>
+
+        <div className="titles">
+          KIDS
+        </div>
+        <div className="row">
+            {this.state.dbKids.map((categories) => {
+              return (
+                  <Category category={categories} gender={'Kids'}/>
+              )
             })}
         </div>
     </CatWrapper>
@@ -83,7 +136,7 @@ export default class HomePage extends Component {
 
 
 
-      </React.Fragment>
+    </React.Fragment>
 
     )
   }
@@ -106,10 +159,19 @@ const CatWrapper = styled.div `
 }
 
 .names {
-    background: black;
-    color: white;
-    font-size: 1.2rem;
+  background: black;
+  color: white;
+  font-size: 1.2rem;
 
+}
+
+.titles {
+    color: black;
+    font-size: 1.6rem;
+    margin-top: 4rem;
+    text-align: center;
+    font-weight: 'bold';
+    letter-spacing: 0.2em;
 }
 
 .img-container{
@@ -123,26 +185,9 @@ const CatWrapper = styled.div `
   transform: scale(1,2);
 }
 
-.edit-btn{
-  position:absolute;
-  top:0;
-  right:0;
-  padding: 0.2rem 0.4rem;
-  background: transparent;
-  color: black;
-  font-size: 0.8rem;
-  border-radius:0.5 0 0 0;
-  transform: translate(100%, 100%);
-  transition: all 1s liner;
-
-}
 .img-container:hover .edit-btn{
   transform:translate(0,0);
 }
 
-.edit-btn:hover{
-  color:black;
-  cursor:pointer;
-}
 `
 
