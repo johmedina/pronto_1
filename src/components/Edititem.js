@@ -26,6 +26,7 @@ export default class Edititem extends Component {
       images: [],
       dbSnapshot: {},
       dbProduct: '',
+      storeInfo: '',
     };
 
     this.onChange = this.onChange.bind(this);
@@ -38,6 +39,14 @@ export default class Edititem extends Component {
   }
 
   componentDidMount() {
+    db.ref(`/stores/${auth.currentUser.uid}`).on("value", snapshot => {
+      let store = [];
+      snapshot.forEach(snap => {
+        store.push(snap.val())
+      });
+      this.setState({ storeInfo:store[0].shop }, function(){console.log(this.state.storeInfo)});
+    });
+
     console.log(this.props.location.state.product, this.props.location.state.category)
     var currentProduct = this.props.location.state.product
     var currentCat = this.props.location.state.category
@@ -61,6 +70,7 @@ export default class Edititem extends Component {
           sizes: details.sizes,
           colors: details.colors,
           images: details.illustration,
+          shop: this.state.storeInfo,
         }, 
           function(){console.log(this.state.dbSnapshot, this.state.title)});
       }
@@ -152,8 +162,8 @@ export default class Edititem extends Component {
       sizes: this.state.sizes,
       fav: 'heart',
       itemID: this.state.itemcode,
-      gender: this.state.gender
-      
+      gender: this.state.gender,
+      shop: this.state.storeInfo,
     })
     .then(() => this.props.history.goBack())
     console.log('end db')

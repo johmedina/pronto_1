@@ -20,6 +20,7 @@ export default class Additem extends Component {
       illustration:[],
       progress: '',
       images: [],
+      storeInfo: '',
     };
 
     this.onChange = this.onChange.bind(this);
@@ -35,6 +36,14 @@ export default class Additem extends Component {
     if (user) {
       console.log('user is: ', user.uid)
     }
+
+    db.ref(`/stores/${auth.currentUser.uid}`).on("value", snapshot => {
+      let store = [];
+      snapshot.forEach(snap => {
+        store.push(snap.val())
+      });
+      this.setState({ storeInfo:store[0].shop }, function(){console.log(this.state.storeInfo)});
+    });
   };
 
   onChange = e => {
@@ -126,6 +135,7 @@ export default class Additem extends Component {
       fav: 'heart',
       itemID: this.state.itemcode,
       gender: this.state.gender,
+      shop: this.state.storeInfo,
       
     })
     .then(() => this.props.history.goBack())
