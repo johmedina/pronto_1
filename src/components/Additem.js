@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
 import { storage, db, auth } from "./Firebase";
+import Toggle from 'react-toggle';
 
 export default class Additem extends Component {
 
@@ -17,10 +18,14 @@ export default class Additem extends Component {
       availability: '',
       sizes: '',
       colors: '',
+      tags: '',
       illustration:[],
       progress: '',
       images: [],
       storeInfo: '',
+      onSale: false, 
+      saleDiscount: '',
+      salePrice: '',
     };
 
     this.onChange = this.onChange.bind(this);
@@ -28,6 +33,8 @@ export default class Additem extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.imagesToStorage = this.imagesToStorage.bind(this);
     this.updateDb = this.updateDb.bind(this);
+    this.handleSale = this.handleSale.bind(this);
+
   }
 
 
@@ -122,6 +129,8 @@ export default class Additem extends Component {
 
   updateDb = () => {
     console.log('updateDb illustrations', this.state.illustration)
+    var path = `/stores/${auth.currentUser.uid}/${this.state.gender}/${this.state.category}/${this.state.itemcode}`;
+    console.log(path)
     //Updating the realtime database 
     db.ref(`/stores/${auth.currentUser.uid}/${this.state.gender}/${this.state.category}/${this.state.itemcode}`)
     .set({
@@ -132,11 +141,14 @@ export default class Additem extends Component {
       colors: this.state.colors,
       malls: this.state.availability,
       sizes: this.state.sizes,
-      fav: 'heart',
       itemID: this.state.itemcode,
       gender: this.state.gender,
       shop: this.state.storeInfo,
-      
+      path: path,
+      tags: this.state.tags,
+      onSale: this.state.onSale,
+      saleDiscount: this.state.saleDiscount,
+      salePrice: this.state.salePrice
     })
     .then(() => this.props.history.goBack())
     console.log('end db')
@@ -154,6 +166,10 @@ export default class Additem extends Component {
 
       // console.log('after', this.state.title)
       // console.log('after', this.state.category)
+  };
+
+  handleSale(){
+    this.setState({onSale: !this.state.onSale}, function(){console.log(this.state.onSale)})
   };
 
   render() {
@@ -226,7 +242,32 @@ export default class Additem extends Component {
                     <input type="text" id="colors" className="FormField__Input2" placeholder="Enter color options"
                       name="colors" value={this.state.colors} onChange={this.handleChange} />
                   </div>
+
+                  <div className="FormField">
+                    <label className="FormField__Label2" htmlFor="tags">Tags</label>
+                    <input type="text" id="tags" className="FormField__Input2" placeholder="Enter item tags"
+                      name="tags" value={this.state.tags} onChange={this.handleChange} />
+                  </div>
+
                   
+                  <div className="FormField">
+                    <label className="FormField__Label2" htmlFor="sale">On Sale</label>
+                    <Toggle
+                      id='onSale'
+                      defaultChecked={this.state.onSale}
+                      onChange={this.handleSale} />
+
+                    <div style={{flexDirection:'row'}}> 
+                      <input type="text" id="saleDiscount" className="FormField__Input3" placeholder="Enter discount off"
+                        name="saleDiscount" value={this.state.saleDiscount} onChange={this.handleChange} />    
+
+                      <input type="text" id="salePrice" className="FormField__Input3" placeholder="Enter new price"
+                        name="salePrice" value={this.state.salePrice} onChange={this.handleChange} />   
+                    </div>  
+                    
+                    
+                  </div>
+
                 </form>
                 <div>
                   <div className="FormField__Label2"> Upload Photos </div>

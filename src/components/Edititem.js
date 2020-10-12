@@ -4,6 +4,9 @@ import { storage, db, auth } from "./Firebase";
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import Carousel from 'react-images';
+import Toggle from 'react-toggle';
+import { ThemeConsumer } from 'styled-components';
+
 
 
 export default class Edititem extends Component {
@@ -21,12 +24,17 @@ export default class Edititem extends Component {
       availability: '',
       sizes: '',
       colors: '',
+      tags: '',
       illustration:[],
       progress: '',
       images: [],
       dbSnapshot: {},
       dbProduct: '',
       storeInfo: '',
+      path: '',
+      isSale: false, 
+      saleDiscount: '',
+      salePrice: '',
     };
 
     this.onChange = this.onChange.bind(this);
@@ -35,6 +43,8 @@ export default class Edititem extends Component {
     this.imagesToStorage = this.imagesToStorage.bind(this);
     this.updateDb = this.updateDb.bind(this);
     this.deleteItem = this.deleteItem.bind(this);
+    this.handleSale = this.handleSale.bind(this);
+
 
   }
 
@@ -71,6 +81,11 @@ export default class Edititem extends Component {
           colors: details.colors,
           images: details.illustration,
           shop: this.state.storeInfo,
+          path: details.path,
+          tags: details.tags,
+          onSale: details.onSale,
+          saleDiscount: details.saleDiscount,
+          salePrice: details.salePrice,
         }, 
           function(){console.log(this.state.dbSnapshot, this.state.title)});
       }
@@ -99,6 +114,7 @@ export default class Edititem extends Component {
 
   };
 
+  // not needed in edit item since changing photos option is not supported
   handleSubmit = () => {
     // e.preventDefault();
     // Uploding images to Firebase storage 
@@ -121,6 +137,7 @@ export default class Edititem extends Component {
   
   };
 
+  // not needed in edit item since changing photos option is not supported 
   imagesToStorage = (image, setOfImages) => {
       var uploadTask = storage.ref(`images/${auth.currentUser.uid}/${this.state.gender}/${this.state.category}/${this.state.itemcode}/${image.name}`).put(image);
       console.log(image)
@@ -150,20 +167,25 @@ export default class Edititem extends Component {
 
   updateDb = () => {
     console.log('updateDb illustrations', this.state.illustration)
+    var path = `/stores/${auth.currentUser.uid}/${this.state.gender}/${this.state.category}/${this.state.itemcode}`
     //Updating the realtime database 
     db.ref(`/stores/${auth.currentUser.uid}/${this.state.gender}/${this.state.category}/${this.state.itemcode}`)
     .set({
       title: this.state.title,
-      illustration: this.state.illustration,
+      illustration: this.state.images,
       desc: this.state.description,
       price: this.state.price,
       colors: this.state.colors,
       malls: this.state.availability,
       sizes: this.state.sizes,
-      fav: 'heart',
       itemID: this.state.itemcode,
       gender: this.state.gender,
       shop: this.state.storeInfo,
+      path: path,
+      tags:  this.state.tags,
+      onSale: this.state.onSale,
+      saleDiscount: this.state.saleDiscount,
+      salePrice: this.state.salePrice,
     })
     .then(() => this.props.history.goBack())
     console.log('end db')
@@ -182,6 +204,10 @@ export default class Edititem extends Component {
 
       // console.log('after', this.state.title)
       // console.log('after', this.state.category)
+  };
+
+  handleSale(){
+    this.setState({onSale: !this.state.onSale}, function(){console.log(this.state.onSale)})
   };
 
   deleteItem = () => {
@@ -312,10 +338,34 @@ export default class Edititem extends Component {
                     <input type="text" id="colors" className="FormField__Input2" placeholder="Enter color options"
                       name="colors" value={this.state.colors} onChange={this.handleChange} />
                   </div>
+
+                  <div className="FormField">
+                    <label className="FormField__Label2" htmlFor="colors">Tags</label>
+                    <input type="text" id="tags" className="FormField__Input2" placeholder="Enter item tags"
+                      name="tags" value={this.state.tags} onChange={this.handleChange} />
+                  </div>
+
+                  <div className="FormField">
+                    <label className="FormField__Label2" htmlFor="sale">On Sale</label>
+                    <Toggle
+                      id='onSale'
+                      checked={this.state.onSale}
+                      defaultChecked={this.state.onSale}
+                      onChange={this.handleSale} />
+
+                    <div style={{flexDirection:'row'}}> 
+                      <input type="text" id="saleDiscount" className="FormField__Input3" placeholder="Enter discount off"
+                        name="saleDiscount" value={this.state.saleDiscount} onChange={this.handleChange} />    
+
+                      <input type="text" id="salePrice" className="FormField__Input3" placeholder="Enter new price"
+                        name="salePrice" value={this.state.salePrice} onChange={this.handleChange} />   
+                    </div>  
+                    
+                  </div>
                   
                 </form>
               </div>
-              <button className="FormField__Button2 mr-20" onClick={this.handleSubmit}>Apply</button>
+              <button className="FormField__Button2 mr-20" onClick={this.updateDb}>Apply</button>
               <button className="FormField__Button2 mr-20" onClick={this.deleteItem}>Delete</button>
               <button className="FormField__Button3 mr-20" onClick={this.props.history.goBack}>Cancel</button>
             </div> 
