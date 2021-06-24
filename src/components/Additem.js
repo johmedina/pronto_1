@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
 import { storage, db, auth } from "./Firebase";
 import Toggle from 'react-toggle';
+import CSVReader from 'react-csv-reader';
 
 export default class Additem extends Component {
 
@@ -34,23 +35,26 @@ export default class Additem extends Component {
     this.imagesToStorage = this.imagesToStorage.bind(this);
     this.updateDb = this.updateDb.bind(this);
     this.handleSale = this.handleSale.bind(this);
+    this.handleUpload = this.handleUpload.bind(this);
 
   }
 
 
   componentDidMount() {
     var user = auth.currentUser;
-    if (user) {
-      console.log('user is: ', user.uid)
-    }
-
-    db.ref(`/stores/${auth.currentUser.uid}`).on("value", snapshot => {
-      let store = [];
-      snapshot.forEach(snap => {
-        store.push(snap.val())
-      });
-      this.setState({ storeInfo:store[0].shop }, function(){console.log(this.state.storeInfo)});
-    });
+    auth.onAuthStateChanged(function(user){
+      if (user) {
+        console.log('user is: ', user.uid)  
+        db.ref(`/stores/${auth.currentUser.uid}`).on("value", snapshot => {
+          let store = [];
+          snapshot.forEach(snap => {
+            store.push(snap.val())
+          });
+          this.setState({ storeInfo:store[0].shop }, function(){console.log(this.state.storeInfo)});
+        });
+      }
+    }.bind(this))
+    
   };
 
   onChange = e => {
@@ -151,6 +155,7 @@ export default class Additem extends Component {
       salePrice: this.state.salePrice
     })
     .then(() => this.props.history.goBack())
+    // Check if this is needed (I removed this because of issues with uploading CSV -- page restarts and outputs error)
     console.log('end db')
 
   };
@@ -170,6 +175,41 @@ export default class Additem extends Component {
 
   handleSale(){
     this.setState({onSale: !this.state.onSale}, function(){console.log(this.state.onSale)})
+  };
+
+  handleUpload(data){
+    console.log(data)
+    for (let i = 0;  i < data.length-1; i++){
+      let pics = []
+      if(data[i].illustration0){pics = [...pics, data[i].illustration0]}
+      if(data[i].illustration1){pics = [...pics, data[i].illustration1]}
+      if(data[i].illustration2){pics = [...pics, data[i].illustration2]}
+      if(data[i].illustration3){pics = [...pics, data[i].illustration3]}
+
+      let is_onsale = false
+      if (data[i].onSale == "TRUE"){is_onsale = true}
+      let disc = ""
+      if (data[i].saleDiscount){disc = data[i].saleDiscount}
+      let sprice= ""
+      if (data[i].salePrice){sprice = data[i].salePrice}
+      this.setState({
+        title: data[i].title,
+        malls: data[i].malls,
+        itemcode: data[i].itemID,
+        category: data[i].category,
+        gender: data[i].gender,
+        price: data[i].price,
+        description: data[i].description,
+        availability: data[i].availability,
+        sizes: data[i].sizes,
+        colors: data[i].colors,
+        tags: data[i].tags,
+        illustration: pics,
+        onSale: is_onsale,
+        saleDiscount: disc,
+        salePrice: sprice},
+        function(){this.updateDb()})
+   }
   };
 
   render() {
@@ -270,6 +310,10 @@ export default class Additem extends Component {
 
                 </form>
                 <div>
+                  <CSVReader
+                    parserOptions={{ header: true }}
+                    onFileLoaded={(data, fileInfo) => this.handleUpload(data)}
+                  />
                   <div className="FormField__Label2"> Upload Photos </div>
                   <div onSubmit={this.onFormSubmit} className="UploadButtons">
                     <input type="file" name="file1" onChange={(e)=>this.onChange(e)} />

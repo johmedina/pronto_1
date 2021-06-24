@@ -25,45 +25,62 @@ export default class HomePage extends Component {
 
   componentDidMount() {
     // store the current brand name
-    db.ref(`/stores/${auth.currentUser.uid}`).on("value", snapshot => {
-      let categories= [];
-      let store = [];
-      snapshot.forEach(snap => {
-        categories.push((snap.key));
-        store.push(snap.val())
-      });
-      this.setState({ dbSnapshot: categories, storeInfo:store[0].shop }, function(){console.log(this.state.dbSnapshot, this.state.storeInfo)});
-    });
-
-    // get women's categories
-    db.ref(`/stores/${auth.currentUser.uid}/Women`).on("value", snapshot => {
-      let categories= [];
-      snapshot.forEach(snap => {
-        categories.push((snap.key));
-      });
-      this.setState({ dbWomen: categories }, function(){console.log('women', this.state.dbWomen)});
-    });
-
-    // get women's categories
-    db.ref(`/stores/${auth.currentUser.uid}/Men`).on("value", snapshot => {
-      let categories= [];
-      snapshot.forEach(snap => {
-        categories.push((snap.key));
-      });
-      this.setState({ dbMen: categories }, function(){console.log('men', this.state.dbMen)});
-    });
-
-    // get women's categories
-    db.ref(`/stores/${auth.currentUser.uid}/Kids`).on("value", snapshot => {
-      let categories= [];
-      snapshot.forEach(snap => {
-        categories.push((snap.key));
-      });
-      this.setState({ dbKids: categories }, function(){console.log('kids', this.state.dbKids)});
-    });
-
+    auth.onAuthStateChanged(function(user) {
+      if (user) {
+        // User is signed in.
+        db.ref(`/stores/${auth.currentUser.uid}`).on("value", snapshot => {
+          let categories= [];
+          let store = [];
+          snapshot.forEach(snap => {
+            categories.push((snap.key));
+            store.push(snap.val())
+          });
+          this.setState({ dbSnapshot: categories, storeInfo:store[0].shop }, function(){console.log(this.state.dbSnapshot, this.state.storeInfo)});
+        });
+    
+        // get women's categories
+        db.ref(`/stores/${auth.currentUser.uid}/Women`).on("value", snapshot => {
+          let categories= [];
+          snapshot.forEach(snap => {
+            categories.push((snap.key));
+          });
+          this.setState({ dbWomen: categories }, function(){console.log('women', this.state.dbWomen)});
+        });
+    
+        // get women's categories
+        db.ref(`/stores/${auth.currentUser.uid}/Men`).on("value", snapshot => {
+          let categories= [];
+          snapshot.forEach(snap => {
+            categories.push((snap.key));
+          });
+          this.setState({ dbMen: categories }, function(){console.log('men', this.state.dbMen)});
+        });
+    
+        // get women's categories
+        db.ref(`/stores/${auth.currentUser.uid}/Kids`).on("value", snapshot => {
+          let categories= [];
+          snapshot.forEach(snap => {
+            categories.push((snap.key));
+          });
+          this.setState({ dbKids: categories }, function(){console.log('kids', this.state.dbKids)});
+        });
+    
+      } else {
+        // No user is signed in.
+      }
+    }.bind(this))
+    
+    
   };
 
+  handleSignOut () {
+    auth.signOut().then(function(){
+      console.log("User Signed Out")
+
+    }).catch(function(error){
+      console.log(error)
+    })
+  }
 
   render() {
     return (
@@ -78,6 +95,12 @@ export default class HomePage extends Component {
 
         <div className="Store_Name">
             {this.state.storeInfo}
+        </div>
+
+        <div className= "signout">
+          <Link to="/">
+            <button className = "MyButton" onClick = {this.handleSignOut}> Sign Out </button>
+          </Link>
         </div>
 
         <div>
