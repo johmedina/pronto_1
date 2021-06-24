@@ -177,6 +177,10 @@ export default class Additem extends Component {
     this.setState({onSale: !this.state.onSale}, function(){console.log(this.state.onSale)})
   };
 
+  handleDbUpload = () => {
+     
+  }
+
   handleUpload(data){
     console.log(data)
     for (let i = 0;  i < data.length-1; i++){
