@@ -10,6 +10,7 @@ import Additem from './components/Additem';
 import EditItem from './components/Edititem';
 import HomePage from './components/Homepage';
 import AddItemsV2 from './components/AddItemsV2'
+import AddCSV from './components/AddCSV'
 
 
 
@@ -32,6 +33,7 @@ class App extends Component {
             <Route path="/details" component={Details} />
             <Route path="/additem" component={AddItemsV2} />
             <Route path="/edititem" component={EditItem} />
+            <Route path='/importcsv' component={AddCSV} />
             <Route component={Default} />
 
           </Switch>
