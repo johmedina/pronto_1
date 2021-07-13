@@ -99,98 +99,41 @@ export default class AddItemsV2 extends Component {
 
         }
         var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json", "Accept", "application/json");
+        myHeaders.append("Content-Type", "application/json");
 
-        var raw = JSON.stringify([{
-          "id":0,
-          "storeId":1,
-          "gender":2,
-          "inStock":true,
-          "itemName":"abayaaaaaaa",
-          "description":"abaya basic",
-          "price":"500",
-          "onSale":false,
-          "salePrice":0,
-          "salePercent":"",
-          "createdAt":"2021-06-24T17:55:46.851Z",
-          "color":0,
-          "newIn":true,
-          "mainCategory":
-          "clothes",
-          "mainImage":"string",
-          "modified":"2021-06-24T17:55:46.851Z"},
+        var raw = JSON.stringify([
           {
-            "id":0,
-            "storeId":1,
-            "gender":2,
-            "inStock":true,
-            "itemName":"johanne",
-            "description":"abaya basic",
-            "price":"500",
-            "onSale":false,
-            "salePrice":0,
-            "salePercent":"",
-            "createdAt":"2021-06-24T17:55:46.851Z",
-            "color":0,
-            "newIn":true,
-            "mainCategory":
-            "clothes",
-            "mainImage":"string",
-            "modified":"2021-06-24T17:55:46.851Z"}]);
+            "id": 0,
+            "storeId": 1,
+            "gender": 2,
+            "inStock": true,
+            "itemName": "abayaaaaaaa",
+            "description": "abaya basic",
+            "price": "500",
+            "onSale": false,
+            "salePrice": 0,
+            "salePercent": "",
+            "createdAt": "2021-06-24T17:55:46.851Z",
+            "color": 0,
+            "newIn": true,
+            "mainCategory": "clothes",
+            "mainImage": "string",
+            "modified": "2021-06-24T17:55:46.851Z"
+          }
+        ]);
 
         var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
+          method: 'POST',
+          headers: myHeaders,
+          body: raw,
+          redirect: 'follow'
         };
 
         fetch("http://localhost:5000/api/items", requestOptions)
-        .then(response => response.json())
-        .then(result => console.log(result))
-        .catch(error => console.log('error', error));
+          .then(response => response.text())
+          .then(result => console.log(result))
+          .catch(error => console.log('error', error));
       }
-
-      handleCSV(data){
-
-        // [{id:0}, {item2} ..]
-        
-        let item_data = []
-
-        for (let i = 0; i < data.length - 1; i++){
-          let pics = []
-          
-          if(data[i].illustration0){pics = [...pics, data[i].illustration0]}
-          if(data[i].illustration1){pics = [...pics, data[i].illustration1]}
-          if(data[i].illustration2){pics = [...pics, data[i].illustration2]}
-          if(data[i].illustration3){pics = [...pics, data[i].illustration3]}
-    
-          let is_onsale = false
-          if (data[i].onSale == "TRUE"){is_onsale = true}
-          let disc = ""
-          if (data[i].saleDiscount){disc = data[i].saleDiscount}
-          let sprice= ""
-          if (data[i].salePrice){sprice = data[i].salePrice}
-          this.setState({
-            title: data[i].title,
-            malls: data[i].malls,
-            itemcode: data[i].itemID,
-            category: data[i].category,
-            gender: data[i].gender,
-            price: data[i].price,
-            description: data[i].description,
-            availability: data[i].availability,
-            sizes: data[i].sizes,
-            colors: data[i].colors,
-            tags: data[i].tags,
-            illustration: pics,
-            onSale: is_onsale,
-            saleDiscount: disc,
-            salePrice: sprice},
-            function(){this.updateDb()})
-       }
-      };
-
 
     render(){
         return(
